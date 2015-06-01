@@ -13,7 +13,10 @@
         </dependencies>
     </metadata>
     <files>
-        <file src="..\Cirrious.MvvmCross.Droid.Support.AppCompat\bin\Release\Cirrious.MvvmCross.Droid.AppCompat.dll" target="Cirrious.MvvmCross.Droid.AppCompat.dll" />
-        <file src="..\Cirrious.MvvmCross.Droid.Support.AppCompat\bin\Release\Cirrious.MvvmCross.Droid.AppCompat.pdb" target="Cirrious.MvvmCross.Droid.AppCompat.pdb" />
+	
+		<!-- droid -->
+		<file src="..\Cirrious.MvvmCross.Droid.Support.AppCompat\bin\Release\Cirrious.MvvmCross.Droid.AppCompat.dll" target="lib\MonoAndroid\Cirrious.MvvmCross.Droid.AppCompat.dll" />
+		<file src="..\Cirrious.MvvmCross.Droid.Support.AppCompat\bin\Release\Cirrious.MvvmCross.Droid.AppCompat.pdb" target="lib\MonoAndroid\Cirrious.MvvmCross.Droid.AppCompat.pdb" />
+		
     </files>
 </package>

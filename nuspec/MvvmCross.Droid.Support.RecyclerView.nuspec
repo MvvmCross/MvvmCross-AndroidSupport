@@ -13,7 +13,10 @@
         </dependencies>
     </metadata>
     <files>
-        <file src="..\Cirrious.MvvmCross.Droid.Support.RecyclerView\bin\Release\Cirrious.MvvmCross.Droid.Support.RecyclerView.dll" target="Cirrious.MvvmCross.Droid.Support.RecyclerView.dll" />
-        <file src="..\Cirrious.MvvmCross.Droid.Support.RecyclerView\bin\Release\Cirrious.MvvmCross.Droid.Support.RecyclerView.pdb" target="Cirrious.MvvmCross.Droid.Support.RecyclerView.pdb" />
+	
+		<!-- droid -->
+		<file src="..\Cirrious.MvvmCross.Droid.Support.RecyclerView\bin\Release\Cirrious.MvvmCross.Droid.Support.RecyclerView.dll" target="lib\MonoAndroid\Cirrious.MvvmCross.Droid.Support.RecyclerView.dll" />
+		<file src="..\Cirrious.MvvmCross.Droid.Support.RecyclerView\bin\Release\Cirrious.MvvmCross.Droid.Support.RecyclerView.pdb" target="lib\MonoAndroid\Cirrious.MvvmCross.Droid.Support.RecyclerView.pdb" />
+		
     </files>
 </package>
