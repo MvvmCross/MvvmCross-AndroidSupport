@@ -76,6 +76,8 @@
     <Compile Include="MvxActivityCompat.cs" />
     <Compile Include="Target\MvxAppCompatSpinnerSelectedItemBinding.cs" />
     <Compile Include="Widget\MvxAppCompatSpinner.cs" />
+    <Compile Include="MvxAppCompatBindingBuilder.cs" />
+    <Compile Include="MvxAppCompat21ViewFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
