@@ -125,14 +125,25 @@ namespace Cirrious.MvvmCross.Droid.Support.Fragging.Caching
             {
                 var backStackFrag = supportFragmentManager.GetBackStackEntryAt(supportFragmentManager.BackStackEntryCount - 1);
 
-                var currentFragmentToRemove = _fragmentCacheToManage.CurrentFragments.Last(x => x.Value == backStackFrag.Name).Key;
-                _fragmentCacheToManage.CurrentFragments.Remove(currentFragmentToRemove);
+                // Backstack can have fragments inside which weren't added to CurrentFragments thus application crash on .Last call
+                var currentFragments = _fragmentCacheToManage.CurrentFragments;
+                if (currentFragments.Any(x => x.Value == backStackFrag.Name))
+                {
+                    var currentFragmentToRemove = currentFragments.Last(x => x.Value == backStackFrag.Name).Key;
+                    currentFragments.Remove(currentFragmentToRemove);
+                }
+
 
                 var newFragment = supportFragmentManager.GetBackStackEntryAt(supportFragmentManager.BackStackEntryCount - 2);
-                var currentFragment = _fragmentCacheToManage.BackStackFragments.Last(x => x.Value == newFragment.Name);
 
-                _fragmentCacheToManage.CurrentFragments.Add(currentFragment.Key, currentFragment.Value);
-                _fragmentCacheToManage.BackStackFragments.Remove(currentFragment);
+                var backStackFragments = _fragmentCacheToManage.BackStackFragments;
+                if (backStackFragments.Any(x => x.Value == newFragment.Name))
+                {
+                    var currentFragment = backStackFragments.Last(x => x.Value == newFragment.Name);
+
+                    currentFragments.Add(currentFragment.Key, currentFragment.Value);
+                    backStackFragments.Remove(currentFragment);
+                }
 
                 supportFragmentManager.PopBackStackImmediate();
                 return;
