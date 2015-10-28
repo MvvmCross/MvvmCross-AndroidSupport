@@ -74,18 +74,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Caching\CachedFragmentManager.cs" />
-    <Compile Include="Caching\CloseFragmentRequest.cs" />
-    <Compile Include="Caching\FragmentCache.cs" />
-    <Compile Include="Caching\FragmentChangingEvenArgs.cs" />
-    <Compile Include="Caching\ShowFragmentRequest.cs" />
     <Compile Include="Fragments\IMvxFragmentView.cs" />
     <Compile Include="Fragments\EventSource\IMvxEventSourceFragment.cs" />
     <Compile Include="Fragments\MvxFragmentExtensions.cs" />
     <Compile Include="Fragments\EventSource\MvxBaseFragmentAdapter.cs" />
     <Compile Include="Fragments\MvxBindingFragmentAdapter.cs" />
     <Compile Include="Fragments\MvxSimpleLayoutInflaterHolder.cs" />
-    <Compile Include="Global\AssemblyConfiguration.cs" />
     <Compile Include="MvxOwnedViewModelFragmentAttribute.cs" />
     <Compile Include="MvxOwnedViewModelFragmentAttributeExtensionMethods.cs" />
     <Compile Include="MvxCachingFragmentActivity.cs" />
@@ -109,7 +103,6 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
