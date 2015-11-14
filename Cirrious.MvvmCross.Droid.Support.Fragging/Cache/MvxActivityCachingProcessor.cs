@@ -294,13 +294,25 @@ namespace Cirrious.MvvmCross.Droid.Support.Fragging.Cache
             if (SupportFragmentManager.BackStackEntryCount > 1)
             {
                 var backStackFrag = SupportFragmentManager.GetBackStackEntryAt(SupportFragmentManager.BackStackEntryCount - 1);
-                _currentFragments.Remove(_currentFragments.Last(x => x.Value == backStackFrag.Name).Key);
+
+                /* 
+                    it looks like sometimes currentFragment cache does not contain backStackFragment - application crash
+                   I think this behavior is especially seen when we show/close fragment very quickly
+                   It might be caused by https://github.com/MvvmCross/MvvmCross-AndroidSupport/issues/113
+                   @thefex
+                */
+                if (backStackFrag != null && _currentFragments.Any(x => x.Value == backStackFrag.Name))
+                    _currentFragments.Remove(_currentFragments.Last(x => x.Value == backStackFrag.Name).Key);
 
                 var newFrag = SupportFragmentManager.GetBackStackEntryAt(SupportFragmentManager.BackStackEntryCount - 2);
-                var currentFragment = _backStackFragments.Last(x => x.Value == newFrag.Name);
 
-                _currentFragments.Add(currentFragment.Key, currentFragment.Value);
-                _backStackFragments.Remove(currentFragment);
+                if (newFrag != null && _backStackFragments.Any(x => x.Value == newFrag.Name))
+                {
+                    var currentFragment = _backStackFragments.Last(x => x.Value == newFrag.Name);
+
+                    _currentFragments.Add(currentFragment.Key, currentFragment.Value);
+                    _backStackFragments.Remove(currentFragment);
+                }
 
                 SupportFragmentManager.PopBackStackImmediate();
                 return;
