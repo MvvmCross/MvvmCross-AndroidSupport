@@ -8,30 +8,30 @@ using Cirrious.MvvmCross.ViewModels;
 
 namespace Cirrious.MvvmCross.Droid.Support.Leanback.Fragments
 {
-    public class MvxBrowseSupportFragment
-		: MvxEventSourceBrowseSupportFragment
+    public class MvxHeadersSupportFragment
+		: MvxEventSourceHeadersSupportFragment
 			, IMvxFragmentView
 	{
 		/// <summary>
-		/// Create new instance of a MvxBrowseSupportFragment
+		/// Create new instance of a MvxHeadersSupportFragment
 		/// </summary>
 		/// <param name="bundle">Usually this would be MvxViewModelRequest serialized</param>
 		/// <returns>Returns an instance of a MvxFragment</returns>
-		public static MvxBrowseSupportFragment NewInstance(Bundle bundle)
+		public static MvxHeadersSupportFragment NewInstance(Bundle bundle)
 		{
 			// Setting Arguments needs to happen before Fragment is attached
 			// to Activity. Arguments are persisted when Fragment is recreated!
-			var fragment = new MvxBrowseSupportFragment { Arguments = bundle };
+			var fragment = new MvxHeadersSupportFragment { Arguments = bundle };
 
 			return fragment;
 		}
 
-		protected MvxBrowseSupportFragment()
+		protected MvxHeadersSupportFragment()
 		{
 			this.AddEventListeners();
 		}
 
-		protected MvxBrowseSupportFragment(IntPtr javaReference, JniHandleOwnership transfer)
+		protected MvxHeadersSupportFragment(IntPtr javaReference, JniHandleOwnership transfer)
 			: base(javaReference, transfer)
 		{
 			this.AddEventListeners();
@@ -67,17 +67,17 @@ namespace Cirrious.MvvmCross.Droid.Support.Leanback.Fragments
 		}
 	}
 
-	public abstract class MvxBrowseSupportFragment<TViewModel>
-		: MvxBrowseSupportFragment
+	public abstract class MvxHeadersSupportFragment<TViewModel>
+		: MvxHeadersSupportFragment
 			, IMvxFragmentView<TViewModel> where TViewModel : class, IMvxViewModel
 	{
 
-		protected MvxBrowseSupportFragment()
+		protected MvxHeadersSupportFragment()
 		{
 
 		}
 
-		protected MvxBrowseSupportFragment(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
+		protected MvxHeadersSupportFragment(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
 		{
 		}
 

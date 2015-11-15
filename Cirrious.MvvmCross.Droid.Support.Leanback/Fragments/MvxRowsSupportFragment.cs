@@ -8,30 +8,30 @@ using Cirrious.MvvmCross.ViewModels;
 
 namespace Cirrious.MvvmCross.Droid.Support.Leanback.Fragments
 {
-    public class MvxBrowseSupportFragment
-		: MvxEventSourceBrowseSupportFragment
+    public class MvxRowsSupportFragment
+		: MvxEventSourceRowsSupportFragment
 			, IMvxFragmentView
 	{
 		/// <summary>
-		/// Create new instance of a MvxBrowseSupportFragment
+		/// Create new instance of a MvxRowsSupportFragment
 		/// </summary>
 		/// <param name="bundle">Usually this would be MvxViewModelRequest serialized</param>
 		/// <returns>Returns an instance of a MvxFragment</returns>
-		public static MvxBrowseSupportFragment NewInstance(Bundle bundle)
+		public static MvxRowsSupportFragment NewInstance(Bundle bundle)
 		{
 			// Setting Arguments needs to happen before Fragment is attached
 			// to Activity. Arguments are persisted when Fragment is recreated!
-			var fragment = new MvxBrowseSupportFragment { Arguments = bundle };
+			var fragment = new MvxRowsSupportFragment { Arguments = bundle };
 
 			return fragment;
 		}
 
-		protected MvxBrowseSupportFragment()
+		protected MvxRowsSupportFragment()
 		{
 			this.AddEventListeners();
 		}
 
-		protected MvxBrowseSupportFragment(IntPtr javaReference, JniHandleOwnership transfer)
+		protected MvxRowsSupportFragment(IntPtr javaReference, JniHandleOwnership transfer)
 			: base(javaReference, transfer)
 		{
 			this.AddEventListeners();
@@ -67,17 +67,17 @@ namespace Cirrious.MvvmCross.Droid.Support.Leanback.Fragments
 		}
 	}
 
-	public abstract class MvxBrowseSupportFragment<TViewModel>
-		: MvxBrowseSupportFragment
+	public abstract class MvxRowsSupportFragment<TViewModel>
+		: MvxRowsSupportFragment
 			, IMvxFragmentView<TViewModel> where TViewModel : class, IMvxViewModel
 	{
 
-		protected MvxBrowseSupportFragment()
+		protected MvxRowsSupportFragment()
 		{
 
 		}
 
-		protected MvxBrowseSupportFragment(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
+		protected MvxRowsSupportFragment(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
 		{
 		}
 

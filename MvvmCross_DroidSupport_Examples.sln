@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{523EBEF6-8800-47D7-B907-2D126F751BB0}"
 EndProject
@@ -60,11 +60,8 @@ Global
 		{24C19002-AD02-4B88-9E57-1C254819D30E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{24C19002-AD02-4B88-9E57-1C254819D30E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{24C19002-AD02-4B88-9E57-1C254819D30E}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{24C19002-AD02-4B88-9E57-1C254819D30E}.Debug|x86.Build.0 = Debug|Any CPU
-		{24C19002-AD02-4B88-9E57-1C254819D30E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{24C19002-AD02-4B88-9E57-1C254819D30E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{24C19002-AD02-4B88-9E57-1C254819D30E}.Release|x86.ActiveCfg = Release|Any CPU
-		{24C19002-AD02-4B88-9E57-1C254819D30E}.Release|x86.Build.0 = Release|Any CPU
+		{24C19002-AD02-4B88-9E57-1C254819D30E}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{24C19002-AD02-4B88-9E57-1C254819D30E}.Release|x86.ActiveCfg = Debug|Any CPU
 		{FFC83AE3-D1FB-4A7B-974E-72697235E047}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FFC83AE3-D1FB-4A7B-974E-72697235E047}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FFC83AE3-D1FB-4A7B-974E-72697235E047}.Debug|x86.ActiveCfg = Debug|Any CPU
