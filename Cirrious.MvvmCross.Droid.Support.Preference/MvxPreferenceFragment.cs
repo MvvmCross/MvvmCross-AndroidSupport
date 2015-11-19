@@ -49,9 +49,7 @@ namespace Cirrious.MvvmCross.Droid.Support.Preference
 		public virtual void OnViewModelSet()
 		{
 		}
-
-        public string UniqueImmutableCacheTag => Tag;
-    }
+	}
 
 	public abstract class MvxPreferenceFragment<TViewModel>
 		: MvxPreferenceFragment

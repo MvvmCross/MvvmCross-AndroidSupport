@@ -65,7 +65,5 @@ namespace Cirrious.MvvmCross.Droid.Support.Leanback.Fragments
 		public virtual void OnViewModelSet()
 		{
 		}
-
-        public string UniqueImmutableCacheTag => Tag;
-    }
+	}
 }
