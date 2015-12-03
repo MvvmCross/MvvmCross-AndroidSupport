@@ -17,7 +17,7 @@ namespace Example.Droid.Fragments
 
         protected BaseFragment()
         {
-            this.RetainInstance = true;
+            //this.RetainInstance = true;
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
