@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
 	<metadata>
-		<id>MvvmCross.Droid.Support.V4</id>
+		<id>MvvmCross.Droid.Support</id>
 		<version>4.0.0-beta7</version>
 		<title>MvvmCross Android Support - V4</title>
 		<authors>MvvmCross</authors>

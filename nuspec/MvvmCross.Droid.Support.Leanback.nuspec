@@ -43,8 +43,8 @@ This package contains Support v17 Leanback support for MvvmCross.
 		</dependencies>
 	</metadata>
 	<files>
-		<file src="..\bin\Release\MvvmCross.Droid.Support.Leanback.*" target="lib\MonoAndroid403" />
-		<file src="..\MvvmCross.Droid.Support.Leanback\**\*.cs" target="src\MvvmCross.Droid.Support.Leanback" />
+		<file src="..\bin\Release\MvvmCross.Droid.Support.V17.Leanback.*" target="lib\MonoAndroid403" />
+		<file src="..\MvvmCross.Droid.Support.V17.Leanback\**\*.cs" target="src\MvvmCross.Droid.Support.Leanback" />
 	</files>
 </package>
 
