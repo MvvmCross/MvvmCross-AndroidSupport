@@ -183,10 +183,13 @@ namespace MvvmCross.Droid.Support.V7.RecyclerView
 
         protected virtual void OnItemsSourceCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            new Handler(Looper.MainLooper).Post(() => NotifyDataSetChanged(e));
+            using (var handler = new Handler(Looper.MainLooper))
+            {
+                handler.Post(() => NotifyDataSetChanged(e));
+            }
         }
 
-        public virtual void NotifyDataSetChanged(NotifyCollectionChangedEventArgs e)
+        protected virtual void NotifyDataSetChanged(NotifyCollectionChangedEventArgs e)
         {
             try
             {
@@ -225,13 +228,13 @@ namespace MvvmCross.Droid.Support.V7.RecyclerView
             }
         }
 
-        private void RaiseDataSetChanged()
+        protected virtual void RaiseDataSetChanged()
         {
             var handler = DataSetChanged;
             handler?.Invoke(this, EventArgs.Empty);
         }
         
-        private void NotifyAndRaiseDataSetChanged()
+        protected virtual void NotifyAndRaiseDataSetChanged()
         {
             this.RaiseDataSetChanged();
             this.NotifyDataSetChanged();
