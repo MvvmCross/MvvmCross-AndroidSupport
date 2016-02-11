@@ -9,6 +9,7 @@ using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Windows.Input;
+using Android.OS;
 using Android.Views;
 using MvvmCross.Platform;
 using MvvmCross.Platform.Exceptions;
@@ -182,10 +183,13 @@ namespace MvvmCross.Droid.Support.V7.RecyclerView
 
         protected virtual void OnItemsSourceCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            NotifyDataSetChanged(e);
+            using (var handler = new Handler(Looper.MainLooper))
+            {
+                handler.Post(() => NotifyDataSetChanged(e));
+            }
         }
 
-        public virtual void NotifyDataSetChanged(NotifyCollectionChangedEventArgs e)
+        protected virtual void NotifyDataSetChanged(NotifyCollectionChangedEventArgs e)
         {
             try
             {
@@ -226,13 +230,13 @@ namespace MvvmCross.Droid.Support.V7.RecyclerView
             }
         }
 
-        private void RaiseDataSetChanged()
+        protected virtual void RaiseDataSetChanged()
         {
             var handler = DataSetChanged;
             handler?.Invoke(this, EventArgs.Empty);
         }
         
-        private void NotifyAndRaiseDataSetChanged()
+        protected virtual void NotifyAndRaiseDataSetChanged()
         {
             this.RaiseDataSetChanged();
             this.NotifyDataSetChanged();
