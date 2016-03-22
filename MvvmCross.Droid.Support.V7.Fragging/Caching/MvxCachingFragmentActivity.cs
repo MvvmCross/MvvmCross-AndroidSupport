@@ -297,7 +297,10 @@ namespace MvvmCross.Droid.Support.V7.Fragging.Caching
 					OnFragmentPopped(currentFragsInfo);
 				}
 
-				return;
+                if (0 != SupportFragmentManager.BackStackEntryCount)
+                {
+                    return;
+                }
 			}
 
 			base.OnBackPressed();
