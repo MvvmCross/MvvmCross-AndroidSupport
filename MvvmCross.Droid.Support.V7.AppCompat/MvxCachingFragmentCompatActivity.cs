@@ -308,7 +308,10 @@ namespace MvvmCross.Droid.Support.V7.AppCompat
                     OnFragmentPopped(currentFragsInfo);
                 }
 
-                return;
+                if (0 != SupportFragmentManager.BackStackEntryCount)
+                {
+                    return;
+                }
             }
 
             base.OnBackPressed();
