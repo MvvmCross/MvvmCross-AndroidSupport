@@ -48,14 +48,14 @@ namespace MvvmCross.Droid.Support.V7.RecyclerView
 
         #endregion
 
-        public override sealed void SetLayoutManager(LayoutManager layout)
+        public sealed override void SetLayoutManager(LayoutManager layout)
         {
             base.SetLayoutManager(layout);
         }
 
         public new IMvxRecyclerAdapter Adapter
         {
-            get { return base.GetAdapter() as IMvxRecyclerAdapter; }
+            get { return GetAdapter() as IMvxRecyclerAdapter; }
             set
             {
                 var existing = Adapter;
@@ -130,14 +130,14 @@ namespace MvvmCross.Droid.Support.V7.RecyclerView
 
         public ICommand ItemClick
         {
-            get { return this.Adapter.ItemClick; }
-            set { this.Adapter.ItemClick = value; }
+            get { return Adapter.ItemClick; }
+            set { Adapter.ItemClick = value; }
         }
 
         public ICommand ItemLongClick
         {
-            get { return this.Adapter.ItemLongClick; }
-            set { this.Adapter.ItemLongClick = value; }
+            get { return Adapter.ItemLongClick; }
+            set { Adapter.ItemLongClick = value; }
         }
     }
 }

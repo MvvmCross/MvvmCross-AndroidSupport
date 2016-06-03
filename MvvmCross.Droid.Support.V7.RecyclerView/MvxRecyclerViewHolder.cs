@@ -13,13 +13,21 @@ using MvvmCross.Binding.Droid.BindingContext;
 
 namespace MvvmCross.Droid.Support.V7.RecyclerView
 {
-    public class MvxRecyclerViewHolder : Android.Support.V7.Widget.RecyclerView.ViewHolder, IMvxRecyclerViewHolder, IMvxBindingContextOwner
+    public class MvxRecyclerViewHolder 
+        : Android.Support.V7.Widget.RecyclerView.ViewHolder
+        , IMvxRecyclerViewHolder
     {
         private readonly IMvxBindingContext _bindingContext;
 
         private object _cachedDataContext;
         private ICommand _click, _longClick;
         private bool _clickOverloaded, _longClickOverloaded;
+
+        public MvxRecyclerViewHolder(View itemView, IMvxAndroidBindingContext context)
+            : base(itemView)
+        {
+            _bindingContext = context;
+        }
 
         public IMvxBindingContext BindingContext
         {
@@ -35,30 +43,50 @@ namespace MvvmCross.Droid.Support.V7.RecyclerView
 
         public ICommand Click
         {
-            get { return this._click; }
-            set { this._click = value; if (this._click != null) this.EnsureClickOverloaded(); }
+            get { return _click; }
+            set
+            {
+                _click = value;
+                if (_click != null)
+                    EnsureClickOverloaded();
+            }
         }
 
         private void EnsureClickOverloaded()
         {
-            if (this._clickOverloaded)
+            if (_clickOverloaded)
                 return;
-            this._clickOverloaded = true;
-            this.ItemView.Click += (sender, args) => ExecuteCommandOnItem(this.Click);
+            _clickOverloaded = true;
+            ItemView.Click += ItemViewOnClick;
+        }
+
+        private void ItemViewOnClick(object sender, EventArgs e)
+        {
+            ExecuteCommandOnItem(Click);
         }
 
         public ICommand LongClick
         {
-            get { return this._longClick; }
-            set { this._longClick = value; if (this._longClick != null) this.EnsureLongClickOverloaded(); }
+            get { return _longClick; }
+            set
+            {
+                _longClick = value;
+                if (_longClick != null)
+                    EnsureLongClickOverloaded();
+            }
         }
 
         private void EnsureLongClickOverloaded()
         {
-            if (this._longClickOverloaded)
+            if (_longClickOverloaded)
                 return;
-            this._longClickOverloaded = true;
-            this.ItemView.LongClick += (sender, args) => ExecuteCommandOnItem(this.LongClick);
+            _longClickOverloaded = true;
+            ItemView.LongClick += ItemViewOnLongClick;
+        }
+
+        private void ItemViewOnLongClick(object sender, View.LongClickEventArgs e)
+        {
+            ExecuteCommandOnItem(LongClick);
         }
 
         protected virtual void ExecuteCommandOnItem(ICommand command)
@@ -74,12 +102,6 @@ namespace MvvmCross.Droid.Support.V7.RecyclerView
                 return;
 
             command.Execute(item);
-        }
-
-        public MvxRecyclerViewHolder(View itemView, IMvxAndroidBindingContext context)
-            : base(itemView)
-        {
-            this._bindingContext = context;
         }
 
         public void OnAttachedToWindow()
@@ -98,6 +120,12 @@ namespace MvvmCross.Droid.Support.V7.RecyclerView
         {
             if (disposing)
             {
+                if (ItemView != null)
+                {
+                    ItemView.Click -= ItemViewOnClick;
+                    ItemView.LongClick -= ItemViewOnLongClick;
+                }
+                    
                 _bindingContext.ClearAllBindings();
                 _cachedDataContext = null;
             }

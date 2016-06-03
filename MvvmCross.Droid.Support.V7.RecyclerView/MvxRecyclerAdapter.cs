@@ -29,19 +29,17 @@ namespace MvvmCross.Droid.Support.V7.RecyclerView
     {
         public event EventHandler DataSetChanged;
 
-        private readonly IMvxAndroidBindingContext _bindingContext;
-
         private ICommand _itemClick, _itemLongClick;
         private IEnumerable _itemsSource;
         private IDisposable _subscription;
         private IMvxTemplateSelector _itemTemplateSelector;
 
-        protected IMvxAndroidBindingContext BindingContext => _bindingContext;
+        protected IMvxAndroidBindingContext BindingContext { get; }
 
         public MvxRecyclerAdapter() : this(MvxAndroidBindingContextHelpers.Current()) { }
         public MvxRecyclerAdapter(IMvxAndroidBindingContext bindingContext)
         {
-            this._bindingContext = bindingContext;
+            BindingContext = bindingContext;
         }
 
         public MvxRecyclerAdapter(IntPtr javaReference, JniHandleOwnership transfer)
@@ -129,7 +127,7 @@ namespace MvvmCross.Droid.Support.V7.RecyclerView
 
         public override Android.Support.V7.Widget.RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
         {
-            var itemBindingContext = new MvxAndroidBindingContext(parent.Context, _bindingContext.LayoutInflaterHolder);
+            var itemBindingContext = new MvxAndroidBindingContext(parent.Context, BindingContext.LayoutInflaterHolder);
 
             return new MvxRecyclerViewHolder(InflateViewForHolder(parent, viewType, itemBindingContext), itemBindingContext)
             {
@@ -155,7 +153,7 @@ namespace MvvmCross.Droid.Support.V7.RecyclerView
             ((IMvxRecyclerViewHolder)holder).DataContext = GetItem(position);
         }
 
-        public override int ItemCount => _itemsSource.Count();
+        public override int ItemCount => _itemsSource?.Count() ?? 0;
 
         public virtual object GetItem(int position)
         {
@@ -171,11 +169,8 @@ namespace MvvmCross.Droid.Support.V7.RecyclerView
                 return;
             }
 
-            if (_subscription != null)
-            {
-                _subscription.Dispose();
-                _subscription = null;
-            }
+            _subscription?.Dispose();
+            _subscription = null;
 
             _itemsSource = value;
 
@@ -206,8 +201,8 @@ namespace MvvmCross.Droid.Support.V7.RecyclerView
                 switch (e.Action)
                 {
                     case NotifyCollectionChangedAction.Add:
-                        this.NotifyItemRangeInserted(e.NewStartingIndex, e.NewItems.Count);
-                        this.RaiseDataSetChanged();
+                        NotifyItemRangeInserted(e.NewStartingIndex, e.NewItems.Count);
+                        RaiseDataSetChanged();
                         break;
                     case NotifyCollectionChangedAction.Move:
                         for (int i = 0; i < e.NewItems.Count; i++)
@@ -215,20 +210,20 @@ namespace MvvmCross.Droid.Support.V7.RecyclerView
                             var oldItem = e.OldItems[i];
                             var newItem = e.NewItems[i];
 
-                            this.NotifyItemMoved(this.ItemsSource.GetPosition(oldItem), this.ItemsSource.GetPosition(newItem));
-                            this.RaiseDataSetChanged();
+                            NotifyItemMoved(ItemsSource.GetPosition(oldItem), ItemsSource.GetPosition(newItem));
+                            RaiseDataSetChanged();
                         }
                         break;
                     case NotifyCollectionChangedAction.Replace:
-                        this.NotifyItemRangeChanged(e.NewStartingIndex, e.NewItems.Count);
-                        this.RaiseDataSetChanged();
+                        NotifyItemRangeChanged(e.NewStartingIndex, e.NewItems.Count);
+                        RaiseDataSetChanged();
                         break;
                     case NotifyCollectionChangedAction.Remove:
-                        this.NotifyItemRangeRemoved(e.OldStartingIndex, e.OldItems.Count);
-                        this.RaiseDataSetChanged();
+                        NotifyItemRangeRemoved(e.OldStartingIndex, e.OldItems.Count);
+                        RaiseDataSetChanged();
                         break;
                     case NotifyCollectionChangedAction.Reset:
-                        this.NotifyAndRaiseDataSetChanged();
+                        NotifyAndRaiseDataSetChanged();
                         break;
                 }
             }
@@ -247,8 +242,8 @@ namespace MvvmCross.Droid.Support.V7.RecyclerView
         
         private void NotifyAndRaiseDataSetChanged()
         {
-            this.RaiseDataSetChanged();
-            this.NotifyDataSetChanged();
+            RaiseDataSetChanged();
+            NotifyDataSetChanged();
         }
     }
 }
