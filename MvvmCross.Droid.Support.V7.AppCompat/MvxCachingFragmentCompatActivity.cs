@@ -5,36 +5,37 @@
 //
 // Project Lead - Stuart Lodge, @slodge, me@slodge.com
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.V4.App;
 using Android.Util;
 using Android.Views;
+using MvvmCross.Core.ViewModels;
+using MvvmCross.Core.Views;
+using MvvmCross.Droid.Platform;
+using MvvmCross.Droid.Shared.Attributes;
+using MvvmCross.Droid.Shared.Caching;
+using MvvmCross.Droid.Shared.Fragments;
+using MvvmCross.Droid.Shared.Presenter;
+using MvvmCross.Droid.Support.V4;
+using MvvmCross.Droid.Views;
 using MvvmCross.Platform;
 using MvvmCross.Platform.Exceptions;
 using MvvmCross.Platform.Platform;
-using MvvmCross.Binding.Droid.BindingContext;
-using MvvmCross.Droid.Platform;
-using MvvmCross.Droid.Views;
-using MvvmCross.Core.ViewModels;
-using MvvmCross.Core.Views;
-using MvvmCross.Droid.Shared.Caching;
-using MvvmCross.Droid.Shared.Presenter;
-using MvvmCross.Droid.Shared.Attributes;
-using MvvmCross.Droid.Shared.Fragments;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MvvmCross.Droid.Support.V7.AppCompat
 {
-    [Register("mvvmcross.droid.support.v7.appcompat.MvxCachingFragmentCompatActivity")]
+	[Register("mvvmcross.droid.support.v7.appcompat.MvxCachingFragmentCompatActivity")]
     public class MvxCachingFragmentCompatActivity : MvxFragmentCompatActivity, IFragmentCacheableActivity, IMvxFragmentHost
     {
         public const string ViewModelRequestBundleKey = "__mvxViewModelRequest";
         private const string SavedFragmentTypesKey = "__mvxSavedFragmentTypes";
         private IFragmentCacheConfiguration _fragmentCacheConfiguration;
+		private string _lastFragmentTag;
 
         public override View OnCreateView(View parent, string name, Context context, IAttributeSet attrs)
         {
@@ -208,8 +209,9 @@ namespace MvvmCross.Droid.Support.V7.AppCompat
 			//If we already have a previously created fragment, we only need to send the new parameters
 			if (fragInfo.CachedFragment != null && fragmentReplaceMode == FragmentReplaceMode.ReplaceFragment)
 			{
-				(fragInfo.CachedFragment as Fragment).Arguments.Clear();
-				(fragInfo.CachedFragment as Fragment).Arguments.PutAll(bundle);
+				var fragment = fragInfo.CachedFragment.ToFragment();
+				fragment.Arguments.Clear();
+				fragment.Arguments.PutAll(bundle);
 			}
 			else
 			{
@@ -219,7 +221,10 @@ namespace MvvmCross.Droid.Support.V7.AppCompat
 				OnFragmentCreated(fragInfo, ft);
 			}
 
-			ft.Replace(fragInfo.ContentId, fragInfo.CachedFragment as Fragment, fragInfo.Tag);
+			if(fragInfo.CacheFragment)
+				_lastFragmentTag = fragInfo.Tag;
+
+			ft.Replace(fragInfo.ContentId, fragInfo.CachedFragment.ToFragment(), fragInfo.Tag);
 
 			//if replacing ViewModel then clear the cache after the fragment
 			//has been added to the transaction so that the Tag property is not null
@@ -227,7 +232,7 @@ namespace MvvmCross.Droid.Support.V7.AppCompat
 			if (fragmentReplaceMode == FragmentReplaceMode.ReplaceFragmentAndViewModel)
 			{
 				var cache = Mvx.GetSingleton<IMvxMultipleViewModelCache>();
-				cache.GetAndClear(fragInfo.ViewModelType, GetTagFromFragment(fragInfo.CachedFragment as Fragment));
+				cache.GetAndClear(fragInfo.ViewModelType, GetTagFromFragment(fragInfo.CachedFragment.ToFragment()));
 			}
 
 			if ((currentFragment != null && fragInfo.AddToBackStack) || forceAddToBackStack)
@@ -310,14 +315,10 @@ namespace MvvmCross.Droid.Support.V7.AppCompat
 
         protected virtual IMvxCachedFragmentInfo GetLastFragmentInfo()
         {
-            var currentCacheableFragments = GetCurrentCacheableFragments().ToList();
-            if (!currentCacheableFragments.Any())
-                throw new InvalidOperationException("Cannot retrieve last fragment as FragmentManager is empty.");
+			if (_lastFragmentTag == null)
+				throw new InvalidOperationException("Cannot retrieve last fragment as no Cacheable fragment has been added yet.");
 
-            var lastFragment = currentCacheableFragments.Last();
-            var tagFragment = GetTagFromFragment(lastFragment);
-
-            return GetFragmentInfoByTag(tagFragment);
+			return GetFragmentInfoByTag(_lastFragmentTag);
         }
 
         protected virtual string GetTagFromFragment(Fragment fragment)
@@ -401,6 +402,7 @@ namespace MvvmCross.Droid.Support.V7.AppCompat
 
         public virtual void OnBeforeFragmentChanging(IMvxCachedFragmentInfo fragmentInfo, FragmentTransaction transaction)
         {
+
         }
 
         // Called before the transaction is commited
