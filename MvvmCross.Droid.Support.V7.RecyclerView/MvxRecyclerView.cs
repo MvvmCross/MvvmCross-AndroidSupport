@@ -34,7 +34,7 @@ namespace MvvmCross.Droid.Support.V7.RecyclerView
             if (adapter == null)
                 return;
 
-            SetLayoutManager(new LinearLayoutManager(context));
+            SetLayoutManager(LayoutManager);
 
             var itemTemplateId = MvxAttributeHelpers.ReadListItemTemplateId(context, attrs);
             var itemTemplateSelector = MvxRecyclerViewAttributeExtensions.BuildItemTemplateSelector(context, attrs);
@@ -71,6 +71,7 @@ namespace MvvmCross.Droid.Support.V7.RecyclerView
                 this.Adapter?.ClearAllBindings();
             }
         }
+
 
         public sealed override void SetLayoutManager(LayoutManager layout)
         {
