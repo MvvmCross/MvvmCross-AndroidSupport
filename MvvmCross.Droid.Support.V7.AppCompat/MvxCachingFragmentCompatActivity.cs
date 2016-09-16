@@ -447,7 +447,7 @@ namespace MvvmCross.Droid.Support.V7.AppCompat
 			var fragmentTag = GetFragmentTag(request, bundle, fragmentType);
 			FragmentCacheConfiguration.RegisterFragmentToCache(fragmentTag, fragmentType, request.ViewModelType, fragmentAttribute.AddToBackStack);
 
-			ShowFragment(fragmentTag, fragmentAttribute.FragmentContentId, bundle);
+			ShowFragment(fragmentTag, fragmentAttribute.FragmentContentId, bundle, fragmentAttribute.AddToBackStack);
 			return true;
 		}
 
