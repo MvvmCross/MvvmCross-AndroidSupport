@@ -34,6 +34,7 @@ namespace MvvmCross.Droid.Support.V4
 		public const string ViewModelRequestBundleKey = "__mvxViewModelRequest";
 		private const string SavedFragmentTypesKey = "__mvxSavedFragmentTypes";
 		private IFragmentCacheConfiguration _fragmentCacheConfiguration;
+		private string _firstFragmentTag;
 
 		protected enum FragmentReplaceMode
 		{
@@ -272,6 +273,17 @@ namespace MvvmCross.Droid.Support.V4
 				var cache = Mvx.GetSingleton<IMvxMultipleViewModelCache>();
 				cache.GetAndClear(fragInfo.ViewModelType, GetTagFromFragment(fragInfo.CachedFragment as Fragment));
 			}
+
+			// Prevent to add the "same first" fragment twice
+			if (fragInfo.Tag == _firstFragmentTag)
+            {
+                SupportFragmentManager.PopBackStack(null, (int)PopBackStackFlags.Inclusive);
+            }
+
+            if (string.IsNullOrEmpty(_firstFragmentTag))
+            {
+                _firstFragmentTag = fragInfo.Tag;
+            }
 
 			if ((currentFragment != null && fragInfo.AddToBackStack) || forceAddToBackStack)
 			{
