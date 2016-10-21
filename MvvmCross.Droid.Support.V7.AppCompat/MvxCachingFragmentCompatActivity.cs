@@ -17,7 +17,6 @@ using Android.Views;
 using MvvmCross.Platform;
 using MvvmCross.Platform.Exceptions;
 using MvvmCross.Platform.Platform;
-using MvvmCross.Binding.Droid.BindingContext;
 using MvvmCross.Droid.Platform;
 using MvvmCross.Droid.Views;
 using MvvmCross.Core.ViewModels;
@@ -26,6 +25,7 @@ using MvvmCross.Droid.Shared.Caching;
 using MvvmCross.Droid.Shared.Presenter;
 using MvvmCross.Droid.Shared.Attributes;
 using MvvmCross.Droid.Shared.Fragments;
+using MvvmCross.Droid.Support.V4;
 
 namespace MvvmCross.Droid.Support.V7.AppCompat
 {
@@ -34,7 +34,10 @@ namespace MvvmCross.Droid.Support.V7.AppCompat
     {
         public const string ViewModelRequestBundleKey = "__mvxViewModelRequest";
         private const string SavedFragmentTypesKey = "__mvxSavedFragmentTypes";
+        private const string SavedTagBackStack = "__mvxSavedTagBackStack";
+
         private IFragmentCacheConfiguration _fragmentCacheConfiguration;
+        private readonly Stack<string> _tagBackStack = new Stack<string>();
 
         public override View OnCreateView(View parent, string name, Context context, IAttributeSet attrs)
         {
@@ -119,6 +122,21 @@ namespace MvvmCross.Droid.Support.V7.AppCompat
             }
         }
 
+        private void RestoreTagBackStackFromBundle(IMvxJsonConverter serializer, Bundle savedInstanceState)
+        {
+            var savedTagBackStackJson = savedInstanceState.GetString(SavedTagBackStack);
+            if (!string.IsNullOrEmpty(savedTagBackStackJson))
+            {
+                var savedReversedTagBackStackState = serializer.DeserializeObject<string[]>(savedTagBackStackJson);
+
+                _tagBackStack.Clear();
+                for (int i = 0; i < savedReversedTagBackStackState.Length; i++)
+                {
+                    _tagBackStack.Push(savedReversedTagBackStackState[i]);
+                }
+            }
+        }
+
         private Dictionary<string, Type> CreateFragmentTypesDictionary(Bundle outState)
         {
             IMvxSavedStateConverter savedStateConverter;
@@ -157,7 +175,19 @@ namespace MvvmCross.Droid.Support.V7.AppCompat
         {
             base.OnSaveInstanceState(outState);
             IMvxJsonConverter ser;
-            if (FragmentCacheConfiguration.HasAnyFragmentsRegisteredToCache && Mvx.TryResolve(out ser))
+            if (!Mvx.TryResolve(out ser))
+            {
+                return;
+            }
+
+            if (_tagBackStack.Any())
+            {
+                var reversedTagBackStack = _tagBackStack.Reverse().ToArray();
+                var json = ser.SerializeObject(reversedTagBackStack);
+                outState.PutString(SavedTagBackStack, json);
+            }
+
+            if (FragmentCacheConfiguration.HasAnyFragmentsRegisteredToCache)
             {
                 FragmentCacheConfiguration.SaveFragmentCacheConfigurationState(outState, ser);
 
@@ -208,9 +238,10 @@ namespace MvvmCross.Droid.Support.V7.AppCompat
 			//If we already have a previously created fragment, we only need to send the new parameters
 			if (fragInfo.CachedFragment != null && fragmentReplaceMode == FragmentReplaceMode.ReplaceFragment)
 			{
-				(fragInfo.CachedFragment as Fragment).Arguments.Clear();
-				(fragInfo.CachedFragment as Fragment).Arguments.PutAll(bundle);
-			}
+                var fragment = fragInfo.CachedFragment.ToFragment();
+                fragment.Arguments.Clear();
+                fragment.Arguments.PutAll(bundle);
+            }
 			else
 			{
 				//Otherwise, create one and cache it
@@ -221,6 +252,8 @@ namespace MvvmCross.Droid.Support.V7.AppCompat
 
 			currentFragment = fragInfo.CachedFragment as Fragment;
 			ft.Replace(fragInfo.ContentId, fragInfo.CachedFragment as Fragment, fragInfo.Tag);
+
+            _tagBackStack.Push(fragInfo.Tag);
 
 			//if replacing ViewModel then clear the cache after the fragment
 			//has been added to the transaction so that the Tag property is not null
@@ -277,6 +310,9 @@ namespace MvvmCross.Droid.Support.V7.AppCompat
         {
             if (SupportFragmentManager.BackStackEntryCount >= 1)
             {
+                var backStackEntry = SupportFragmentManager.GetBackStackEntryAt(SupportFragmentManager.BackStackEntryCount - 1);
+                RemoveFromTagBackStack(backStackEntry.Name);
+
                 SupportFragmentManager.PopBackStackImmediate();
 
                 if (FragmentCacheConfiguration.EnableOnFragmentPoppedCallback)
@@ -289,6 +325,7 @@ namespace MvvmCross.Droid.Support.V7.AppCompat
                 return;
             }
 
+            _tagBackStack.Clear();
             base.OnBackPressed();
         }
 
@@ -311,12 +348,12 @@ namespace MvvmCross.Droid.Support.V7.AppCompat
 
         protected virtual IMvxCachedFragmentInfo GetLastFragmentInfo()
         {
-            var currentCacheableFragments = GetCurrentCacheableFragments().ToList();
-            if (!currentCacheableFragments.Any())
+            if (!_tagBackStack.Any())
+            {
                 throw new InvalidOperationException("Cannot retrieve last fragment as FragmentManager is empty.");
+            }
 
-            var lastFragment = currentCacheableFragments.Last();
-            var tagFragment = GetTagFromFragment(lastFragment);
+            var tagFragment = _tagBackStack.Peek();
 
             return GetFragmentInfoByTag(tagFragment);
         }
@@ -351,7 +388,9 @@ namespace MvvmCross.Droid.Support.V7.AppCompat
 					return;
 				}
 
-				FragmentCacheConfiguration.RestoreCacheConfiguration(bundle, serializer);
+                RestoreTagBackStackFromBundle(serializer, bundle);
+
+                FragmentCacheConfiguration.RestoreCacheConfiguration(bundle, serializer);
 				// Gabriel has blown his trumpet. Ressurect Fragments from the dead.
 				RestoreFragmentsCache();
 
@@ -389,6 +428,7 @@ namespace MvvmCross.Droid.Support.V7.AppCompat
             var frag = SupportFragmentManager.FindFragmentById(contentId);
             if (frag == null) return;
 
+            RemoveFromTagBackStack(frag.Tag);
             SupportFragmentManager.PopBackStackImmediate(tag, 1);
         }
 
@@ -456,6 +496,7 @@ namespace MvvmCross.Droid.Support.V7.AppCompat
 		{
 			if (SupportFragmentManager.BackStackEntryCount == 0)
 			{
+                _tagBackStack.Clear();
 				base.OnBackPressed();
 				return true;
 			}
@@ -471,6 +512,24 @@ namespace MvvmCross.Droid.Support.V7.AppCompat
 			CloseFragment(frag.Tag, frag.ContentId);
 			return true;
 		}
+
+        private void RemoveFromTagBackStack(string tag)
+        {
+            // reverse to more logical order
+            var tagBackStack = _tagBackStack.Reverse().ToList();
+
+            // remove tag
+            var firstFoundTagIndex = tagBackStack.FindIndex(backStackTag => backStackTag == tag);
+            if (firstFoundTagIndex > 0)
+                tagBackStack.RemoveAt(firstFoundTagIndex);
+
+            // hard reset and reinitialize _tagBackStack 
+            _tagBackStack.Clear();
+            for (var i = 0; i < tagBackStack.Count; i++)
+            {
+                _tagBackStack.Push(tagBackStack[i]);
+            }
+        }
     }
 
     public abstract class MvxCachingFragmentCompatActivity<TViewModel>
